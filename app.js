@@ -27,8 +27,8 @@ let age = document.getElementById('typeNumber');
 
 var genderSelect = document.getElementById('citySelect')
 
-
-function register() {
+var registerbool=false,loginbool=false
+async function register() {
     console.log(genderSelect.value);
     if(email.value && password.value &&age.value&&genderSelect.value){
         if (email.value.toLowerCase().match(
@@ -44,44 +44,54 @@ function register() {
         }else if(age.value<1||age.value>99){
             alert("Age is Not Valid")
         }else{
-             auth.createUserWithEmailAndPassword(email.value, password.value)
-                .then(async (UserCredientials) => {
-                    let dataObj = {
-                        email: UserCredientials.user.email,
-                        age:age.value,
-                        gender:genderSelect.value,
+            console.log("admin",loginbool,registerbool);
+           let UserCredientials= await auth.createUserWithEmailAndPassword(email.value, password.value)
+                // .then(async (UserCredientials) => {
+                    if(UserCredientials){
+                        let dataObj = {
+                            email: UserCredientials.user.email,
+                            age:age.value,
+                            gender:genderSelect.value,
+                            role:"user",
+                            UID: UserCredientials.user.uid,
+                        }
 
-                        UID: UserCredientials.user.uid,
+                        let setdt=await db.collection('streamUsers').doc(UserCredientials.user.uid).set(dataObj);
+                        window.location.replace("./afterlogin.html")
+                        registerbool=true
+                        console.log(registerbool);
                     }
-                    await saveDataToFirestore(dataObj)
-                    if (UserCredientials.user) {
-                        email.value = '';
-                        password.value = '';
-                        age.value = '';
+                    
+                    // await saveDataToFirestore(dataObj)
+                    // console.log(setdt,UserCredientials.user.uid,dataObj);
+                    // if (UserCredientials.user) {
+                    //     email.value = '';
+                    //     password.value = '';
+                    //     age.value = '';
     
-                    }
-                })
-                .catch((error) => {
-                    alert(error.message)
-
-                    console.log(error.message)
-                })
+                    // }
+               
+               
         }
     }else{
         alert("Please Fill Empty Fields")
     }
 }
 let parag=document.getElementById("helo")
+console.log(registerbool);
+async function login() {
 
-function login() {
-    auth.signInWithEmailAndPassword(email.value, password.value)
-        
+    await auth.signInWithEmailAndPassword(email.value, password.value)
+    window.location.replace("./afterlogin.html")
+    loginbool=true
 
 
 }
 
 async function saveDataToFirestore(dataObjEl) {
+
     let currentUser = auth.currentUser;
+    console.log("uid",currentUser.uid);
     await db.collection('streamUsers').doc(currentUser.uid).set(dataObjEl);
 
     console.log('agha', dataObjEl)
@@ -91,6 +101,7 @@ async function saveDataToFirestore(dataObjEl) {
 
 
 //////////////////////////////// checking for current user
+console.log(registerbool,loginbool);
 
  auth.onAuthStateChanged((user) => {
     let pageLocArr = window.location.href.split('/');
@@ -100,11 +111,17 @@ async function saveDataToFirestore(dataObjEl) {
     let pagename=pageLocArr[pageLocArr.length-1]
 console.log(pagename);
     if(user){
-        
-        if(!authenticatedPages.find((dt)=>dt===pagename)){
+        console.log(registerbool,loginbool);
+        // if(!authenticatedPages.find((dt)=>dt===pagename)){
+            // let clone =pageLocArr.slice(0)
+            // clone.splice(pageLocArr.length-1,1,authenticatedPages[0])
+            // console.log(clone);
+            // window.location.replace(`${clone.join("/")}`)
+        // }else 
+        if(unauth.find((dt)=>dt===pagename)==unauth[2]||unauth.find((dt)=>dt===pagename)==unauth[0]){
+            console.log(pagename);
             let clone =pageLocArr.slice(0)
             clone.splice(pageLocArr.length-1,1,authenticatedPages[0])
-            console.log(clone);
             window.location.replace(`${clone.join("/")}`)
         }
 
