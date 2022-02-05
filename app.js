@@ -17,18 +17,13 @@ firebase.analytics();
 let db = firebase.firestore();
 let auth = firebase.auth();
 let storage = firebase.storage();
-
 let email = document.getElementById("email");
 let userName = document.getElementById("user");
-
 let password = document.getElementById("password");
-
 let age = document.getElementById("typeNumber");
-
 var genderSelect = document.getElementById("citySelect");
 
-var registerbool = false,
-  loginbool = false;
+
 async function register() {
   console.log(genderSelect.value);
   if (email.value && password.value && age.value && genderSelect.value&&userName.value) {
@@ -48,7 +43,6 @@ async function register() {
     } else if (age.value < 1 || age.value > 99) {
       alert("Age is Not Valid");
     } else {
-      // console.log("admin", loginbool, registerbool);
       let UserCredientials = await auth.createUserWithEmailAndPassword(
         email.value.trim(),
         password.value.trim()
@@ -71,8 +65,7 @@ async function register() {
           .set(dataObj);
         
         window.location.replace("./userpages/userlogin.html");
-        registerbool = true;
-        console.log(registerbool);
+      
       }
 
       // await saveDataToFirestore(dataObj)
@@ -89,21 +82,18 @@ async function register() {
   }
 }
 let parag = document.getElementById("helo");
-console.log(registerbool);
 async function login() {
-  let user=await auth.signInWithEmailAndPassword(email.value, password.value);
-  console.log(user);
-  // await saveDataInStreamUsers()
+  let {user}=await auth.signInWithEmailAndPassword(email.value, password.value);
+  console.log(user.uid);
+  await UpdateDataInStreamUsers(user.uid,{isActive:true})
 }
 
-async function saveDataToFirestore(dataObjEl) {
-  let currentUser = auth.currentUser;
-  console.log("uid", currentUser.uid);
-  await db.collection("streamUsers").doc(currentUser.uid).set(dataObjEl);
 
-}
 async function saveDataInStreamUsers(id,data){
   return await db.collection("streamUsers").doc(id).set(data);
+}
+async function UpdateDataInStreamUsers(id,data){
+  return await db.collection("streamUsers").doc(id).update(data);
 }
 
 //////////////////////////////// checking for current user
@@ -140,6 +130,8 @@ auth.onAuthStateChanged(async (user) => {
       if (userdata?.data()?.role == "user") {
         let clone = pageLocArr.slice(0);
         clone.splice(pageLocArr.length - 2, 2, authenticatedPages[0]);
+        
+
         window.location.replace(`${clone.join("/")}`);
       }   
     }
@@ -164,6 +156,10 @@ auth.onAuthStateChanged(async (user) => {
 /////////////////////////////// checking for current user
 
 async function logOut() {
+  const user =await auth.currentUser
+  console.log(user.uid);
+ await UpdateDataInStreamUsers(user?.uid,{isActive:false})
   await auth.signOut();
+
   alert("logout successfully");
 }
