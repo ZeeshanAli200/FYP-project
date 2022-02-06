@@ -17,19 +17,21 @@ firebase.analytics();
 let db = firebase.firestore();
 let auth = firebase.auth();
 let storage = firebase.storage();
-
 let email = document.getElementById("email");
+let userName = document.getElementById("user");
 let password = document.getElementById("password");
-
 let age = document.getElementById("typeNumber");
-
 var genderSelect = document.getElementById("citySelect");
 
-var registerbool = false,
-  loginbool = false;
 async function register() {
   console.log(genderSelect.value);
-  if (email.value && password.value && age.value && genderSelect.value) {
+  if (
+    email.value &&
+    password.value &&
+    age.value &&
+    genderSelect.value &&
+    userName.value
+  ) {
     if (
       email.value
         .toLowerCase()
@@ -55,16 +57,16 @@ async function register() {
           gender: genderSelect.value,
           role: "user",
           UID: UserCredientials.user.uid,
+          userName: userName.value.trim(),
+          isActive: true,
         };
 
         let setdt = await db
           .collection("streamUsers")
           .doc(UserCredientials.user.uid)
           .set(dataObj);
-        
-        window.location.replace("./userlogin.html");
-        registerbool = true;
-        console.log(registerbool);
+
+        window.location.replace("./userpages/userlogin.html");
       }
 
       // await saveDataToFirestore(dataObj)
@@ -81,44 +83,44 @@ async function register() {
   }
 }
 let parag = document.getElementById("helo");
-console.log(registerbool);
 async function login() {
-  await auth.signInWithEmailAndPassword(email.value, password.value);
-  loginbool = true;
+  let { user } = await auth.signInWithEmailAndPassword(
+    email.value,
+    password.value
+  );
+  console.log(user.uid);
+  await UpdateDataInStreamUsers(user.uid, { isActive: true });
 }
 
-async function saveDataToFirestore(dataObjEl) {
-  let currentUser = auth.currentUser;
-  console.log("uid", currentUser.uid);
-  await db.collection("streamUsers").doc(currentUser.uid).set(dataObjEl);
-
-  console.log("agha", dataObjEl);
+async function saveDataInStreamUsers(id, data) {
+  return await db.collection("streamUsers").doc(id).set(data);
+}
+async function UpdateDataInStreamUsers(id, data) {
+  return await db.collection("streamUsers").doc(id).update(data);
 }
 
 //////////////////////////////// checking for current user
-console.log(registerbool, loginbool);
 
 auth.onAuthStateChanged(async (user) => {
   let pageLocArr = window.location.href.split("/");
   // let pageName = pageLocArr[pageLocArr.length - 1];
-  let authenticatedPages = ["userpages/userlogin.html"];
   let unauth = ["login.html", "register.html", "index.html"];
-  let adminpages = ["adminpages/dashboard.html" , "adminpages/active-users.html"];
+  let adminpages = ["adminpages/dashboard.html" , "adminpages/active-users.html" ,  "adminpages/adminpage1.html"];
+  // user pages
+  let authenticatedPages = [
+    "userpages/userlogin.html",
+    "userpages/userhome.html",
+  ];
+  // unauthuser pages
+  // admin pages
+
   let pagename = pageLocArr[pageLocArr.length - 1];
   console.log(pagename);
   if (user) {
-    // if(!authenticatedPages.find((dt)=>dt===pagename)){
-    // let clone =pageLocArr.slice(0)
-    // clone.splice(pageLocArr.length-1,1,authenticatedPages[0])
-    // console.log(clone);
-    // window.location.replace(`${clone.join("/")}`)
-    // }else
     if (
       unauth.find((dt) => dt === pagename) == unauth[2] ||
       unauth.find((dt) => dt === pagename) == unauth[0]
     ) {
-      // console.log(pagename);
-
       let userdata = await db.collection("streamUsers").doc(user.uid).get();
       if (userdata?.data()?.role == "user") {
         let clone = pageLocArr.slice(0);
@@ -129,63 +131,47 @@ auth.onAuthStateChanged(async (user) => {
         clone.splice(pageLocArr.length - 1, 1, adminpages[0]);
         window.location.replace(`${clone.join("/")}`);
       }
-      // window.location.replace(`${clone.join("/")}`)
-    } else if (adminpages.find((dt) => dt === pagename)) {
+    } else if (
+      adminpages.find(
+        (dt) => dt.split("/")[dt.split("/").length - 1] === pagename
+      )
+    ) {
       let userdata = await db.collection("streamUsers").doc(user.uid).get();
       if (userdata?.data()?.role == "user") {
         let clone = pageLocArr.slice(0);
-        clone.splice(pageLocArr.length - 1, 1, authenticatedPages[0]);
+        clone.splice(pageLocArr.length - 2, 2, authenticatedPages[0]);
+
         window.location.replace(`${clone.join("/")}`);
       }
-
-    //   else if (userdata?.data()?.role == "admin") {
-    //     let clone = pageLocArr.slice(0);
-    //     clone.splice(pageLocArr.length - 1, 1, adminpages[0]);
-    //     window.location.replace(`${clone.join("/")}`);
-    //   }
-    }
-    else if (authenticatedPages.find((dt) => dt === pagename)) {
-        let userdata = await db.collection("streamUsers").doc(user.uid).get();
-       
-  
-       if (userdata?.data()?.role == "admin") {
-          let clone = pageLocArr.slice(0);
-          clone.splice(pageLocArr.length - 1, 1, adminpages[0]);
-          window.location.replace(`${clone.join("/")}`);
-        }
+    } else if (
+      authenticatedPages.find(
+        (dt) => dt.split("/")[dt.split("/").length - 1] === pagename
+      )
+    ) {
+      let userdata = await db.collection("streamUsers").doc(user.uid).get();
+      if (userdata?.data()?.role == "admin") {
+        let clone = pageLocArr.slice(0);
+        clone.splice(pageLocArr.length - 2, 2, adminpages[0]);
+        window.location.replace(`${clone.join("/")}`);
       }
-    // else if(authenticatedPages.find((dt)=>dt===pagename)){
-    //     let userdata=await db.collection("streamUsers").doc(user.uid).get()
-    //     if(userdata?.data()?.role=="user"){
-    //         let clone =pageLocArr.slice(0)
-    //         clone.splice(pageLocArr.length-1,1,authenticatedPages[1])
-    //         window.location.replace(`${clone.join("/")}`)
-    //     }else if(userdata?.data()?.role=="admin"){
-    //         let clone =pageLocArr.slice(0)
-    //         clone.splice(pageLocArr.length-1,1,authenticatedPages[0])
-    //         window.location.replace(`${clone.join("/")}`)
-
-    //     }
-    //     console.log(userdata.data());
-    // }
+    }
   } else {
     if (!unauth.find((dt) => dt == pagename)) {
       let clone = pageLocArr.slice(0);
-
       clone.splice(pageLocArr.length - 2, 2, unauth[0]);
       console.log(clone);
       window.location.replace(`${clone.join("/")}`);
     }
-
-    // else{
-
-    // }
   }
 });
 
 /////////////////////////////// checking for current user
 
 async function logOut() {
+  const user = await auth.currentUser;
+  console.log(user.uid);
+  await UpdateDataInStreamUsers(user?.uid, { isActive: false });
   await auth.signOut();
-  alert("logiut successfully");
+
+  alert("logout successfully");
 }
