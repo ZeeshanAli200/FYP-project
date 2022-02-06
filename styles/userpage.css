@@ -4,3 +4,10 @@ display: -webkit-box;
 overflow: hidden;
 -webkit-box-orient: vertical;
 }
+
+.navbar{
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+}
+.bodyStyles{
+    background-color: #1f1f1f;
+}

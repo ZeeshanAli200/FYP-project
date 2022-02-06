@@ -1,4 +1,4 @@
-let moviesarr = {};
+let moviesarr = [];
 let childele = `<div class="col-sm-3">
 <div class="card">
   <img class="card-img-top" src="" alt="Card image cap" />
@@ -14,35 +14,50 @@ let childele = `<div class="col-sm-3">
 </div>`;
 var addmovieslist = document.getElementById("addmovieslist");
 var addmovieslistRecommended=document.getElementById("recommedSec")
+var playerDiv=document.getElementById("playerDiv")
 async function videodata() {
-  const response = await fetch(
-    "https://app.tapmad.com/api/getAllMoviesWithPagination/0/5/0/16",
-    { method: "GET" }
-  );
-  var data = await response.json();
-  moviesarr = data?.Sections.Movies[0];
+  // const response = await fetch(
+  //   "https://app.tapmad.com/api/getAllMoviesWithPagination/0/5/0/16",
+  //   { method: "GET" }
+  // );
+  const movies= await db.collection("movieList").get()
+  const movieData = movies.docs.map((doc) => doc.data());
+  // var data = await response.json();
+  console.log(movieData);
+
+  moviesarr = movieData;
+}
+async function videodata1() {
+  // const response = await fetch(
+  //   "https://app.tapmad.com/api/getAllMoviesWithPagination/0/5/0/16",
+  //   { method: "GET" }
+  // );
+  const movies= await db.collection("movieList").get()
+  const movieData = movies.docs.map((doc) => doc.data());
+  // var data = await response.json();
+  console.log(movieData);
+
+  return movieData;
 }
 async function moviesLoad(eve) {
   await videodata();
 
   addmovieslist.innerHTML = `<div class="col-sm-12">
     <div class="card-body">
-      <h4 class="card-title">${moviesarr?.SectionName}</h5>
+      <h4 class="card-title text-white">Most Watched Movies</h5>
       
     </div>
   </div>`;
-  moviesarr?.Videos?.map(
+  moviesarr?.map(
     (dt) =>
       (addmovieslist.innerHTML += `<div class="col-sm-3">
         <a class="navbar-brand " href="./showVideo.html?id=${dt?.VideoEntityId}">
         <div class="card">
-          <img class="card-img-top" src="${dt?.VideoOnDemandThumb}" alt="Card image cap" />
+          <img class="card-img-top" src="${dt?.VideoImageThumbnail || dt.VideoOnDemandThumb}" alt="Card image cap" />
           <div class="card-body">
             <h5 class="card-title">${dt?.VideoName}</h5>
-            <p class="card-text limitdesc">
-             ${dt?.VideoDescription}
-            </p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            
+            
           </div>
         </div></a>
         </div>`)
@@ -105,6 +120,11 @@ async function watchMovie() {
   var data = await response.json();
   const { Video } = data;
   const { ContentStreamUrlLQ } = Video;
+  console.log(Video);
+  playerDiv.innerHTML+=`<h5 class="card-title">${Video.VideoName}</h5>
+  <p class="card-text limitdesc">
+   ${Video.VideoDescription}
+  </p>`
   if (ContentStreamUrlLQ) {
     console.log("one");
     // s?etTimeout(() => {
@@ -112,13 +132,14 @@ async function watchMovie() {
       await initializePlayer(ContentStreamUrlLQ);
     // }, 2000);
   }
+  
   await videodata();
-  const allvideos = moviesarr?.Videos;
+  const allvideos = moviesarr;
   const selectedMovie = allvideos.find((dt) => dt?.VideoEntityId == id);
-  let videoarr = [],
-    Randindx = Math.floor(Math.random() * 16);
+  let videoarr = [];
+    
   for (let i = 0; i < 8; i++) {
-    videoarr.push(allvideos[Math.floor(Math.random() * 16)]);
+    videoarr.push(allvideos[Math.floor(Math.random() * 14)]);
   }
   addmovieslistRecommended.innerHTML = `<div class="col-sm-12">
     <div class="card-body">
@@ -126,17 +147,16 @@ async function watchMovie() {
       
     </div>
   </div>`;
+console.log(videoarr);
   videoarr?.map(
     (dt) =>
       (addmovieslistRecommended.innerHTML += `<div class="col-sm-12">
         <a class="navbar-brand " href="./showVideo.html?id=${dt?.VideoEntityId}">
         <div class="card">
-          <img class="card-img-top" src="${dt?.VideoOnDemandThumb}" alt="Card image cap" />
+          <img class="card-img-top" src="${dt?.VideoImageThumbnail||dt?.VideoOnDemandThumb}" alt="Card image cap" />
           <div class="card-body">
             <h5 class="card-title">${dt?.VideoName}</h5>
-            <p class="card-text limitdesc">
-             ${dt?.VideoDescription}
-            </p>
+           
             
           </div>
         </div></a>
