@@ -129,6 +129,7 @@ async function watchMovie() {
     console.log("one");
     // s?etTimeout(() => {
       // console.log("two");
+      console.log("url : ",ContentStreamUrlLQ);
       await initializePlayer(ContentStreamUrlLQ);
     // }, 2000);
   }

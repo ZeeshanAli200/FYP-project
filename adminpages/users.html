@@ -11,7 +11,6 @@
       crossorigin="anonymous"
     />
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
-
     <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
@@ -21,7 +20,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-storage.js"></script>
     <title>Document</title>
   </head>
-  <body onload="onLoadActiveUser()">
+  <body onload="onLoadUser()">
     <nav>Navbar</nav>
     <div class="container">
       <div class="row card shadow">
@@ -38,7 +37,7 @@
                 <th scope="col">Active</th>
               </tr>
             </thead>
-            <tbody id="active-user-table"></tbody>
+            <tbody id="user-table"></tbody>
           </table>
         </div>
       </div>
