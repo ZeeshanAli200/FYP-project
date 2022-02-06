@@ -23,10 +23,15 @@ let password = document.getElementById("password");
 let age = document.getElementById("typeNumber");
 var genderSelect = document.getElementById("citySelect");
 
-
 async function register() {
   console.log(genderSelect.value);
-  if (email.value && password.value && age.value && genderSelect.value&&userName.value) {
+  if (
+    email.value &&
+    password.value &&
+    age.value &&
+    genderSelect.value &&
+    userName.value
+  ) {
     if (
       email.value
         .toLowerCase()
@@ -55,17 +60,16 @@ async function register() {
           gender: genderSelect.value,
           role: "user",
           UID: UserCredientials.user.uid,
-          userName:userName.value.trim(),
-          isActive:true
+          userName: userName.value.trim(),
+          isActive: true,
         };
 
         let setdt = await db
           .collection("streamUsers")
           .doc(UserCredientials.user.uid)
           .set(dataObj);
-        
+
         window.location.replace("./userpages/userlogin.html");
-      
       }
 
       // await saveDataToFirestore(dataObj)
@@ -83,30 +87,34 @@ async function register() {
 }
 let parag = document.getElementById("helo");
 async function login() {
-  let {user}=await auth.signInWithEmailAndPassword(email.value, password.value);
+  let { user } = await auth.signInWithEmailAndPassword(
+    email.value,
+    password.value
+  );
   console.log(user.uid);
-  await UpdateDataInStreamUsers(user.uid,{isActive:true})
+  await UpdateDataInStreamUsers(user.uid, { isActive: true });
 }
 
-
-async function saveDataInStreamUsers(id,data){
+async function saveDataInStreamUsers(id, data) {
   return await db.collection("streamUsers").doc(id).set(data);
 }
-async function UpdateDataInStreamUsers(id,data){
+async function UpdateDataInStreamUsers(id, data) {
   return await db.collection("streamUsers").doc(id).update(data);
 }
 
 //////////////////////////////// checking for current user
 
-
 auth.onAuthStateChanged(async (user) => {
   let pageLocArr = window.location.href.split("/");
-// user pages
-  let authenticatedPages = ["userpages/userlogin.html","userpages/userhome.html"];
-// unauthuser pages  
+  // user pages
+  let authenticatedPages = [
+    "userpages/userlogin.html",
+    "userpages/userhome.html",
+  ];
+  // unauthuser pages
   let unauth = ["login.html", "register.html", "index.html"];
-// admin pages  
-  let adminpages = ["adminpages/afterlogin.html","adminpages/adminpage1.html"];
+  // admin pages
+  let adminpages = ["adminpages/afterlogin.html", "adminpages/adminpage1.html"];
 
   let pagename = pageLocArr[pageLocArr.length - 1];
   console.log(pagename);
@@ -125,40 +133,46 @@ auth.onAuthStateChanged(async (user) => {
         clone.splice(pageLocArr.length - 1, 1, adminpages[0]);
         window.location.replace(`${clone.join("/")}`);
       }
-    } else if (adminpages.find((dt) => dt.split("/")[dt.split("/").length-1] === pagename)) {
+    } else if (
+      adminpages.find(
+        (dt) => dt.split("/")[dt.split("/").length - 1] === pagename
+      )
+    ) {
       let userdata = await db.collection("streamUsers").doc(user.uid).get();
       if (userdata?.data()?.role == "user") {
         let clone = pageLocArr.slice(0);
         clone.splice(pageLocArr.length - 2, 2, authenticatedPages[0]);
-        
 
         window.location.replace(`${clone.join("/")}`);
-      }   
-    }
-    else if (authenticatedPages.find((dt) => dt.split("/")[dt.split("/").length-1] === pagename)) {   
-        let userdata = await db.collection("streamUsers").doc(user.uid).get();
-       if (userdata?.data()?.role == "admin") {
-          let clone = pageLocArr.slice(0);
-          clone.splice(pageLocArr.length - 2, 2, adminpages[0]);
-          window.location.replace(`${clone.join("/")}`);
-        }
       }
+    } else if (
+      authenticatedPages.find(
+        (dt) => dt.split("/")[dt.split("/").length - 1] === pagename
+      )
+    ) {
+      let userdata = await db.collection("streamUsers").doc(user.uid).get();
+      if (userdata?.data()?.role == "admin") {
+        let clone = pageLocArr.slice(0);
+        clone.splice(pageLocArr.length - 2, 2, adminpages[0]);
+        window.location.replace(`${clone.join("/")}`);
+      }
+    }
   } else {
     if (!unauth.find((dt) => dt == pagename)) {
       let clone = pageLocArr.slice(0);
       clone.splice(pageLocArr.length - 2, 2, unauth[0]);
       console.log(clone);
       window.location.replace(`${clone.join("/")}`);
-    }  
+    }
   }
 });
 
 /////////////////////////////// checking for current user
 
 async function logOut() {
-  const user =await auth.currentUser
+  const user = await auth.currentUser;
   console.log(user.uid);
- await UpdateDataInStreamUsers(user?.uid,{isActive:false})
+  await UpdateDataInStreamUsers(user?.uid, { isActive: false });
   await auth.signOut();
 
   alert("logout successfully");
