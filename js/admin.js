@@ -1,7 +1,6 @@
 // let db = firebase.firestore();
 
 async function getAllUser() {
-  console.log("all user");
   try {
     const users = await db.collection("streamUsers").get();
     const length = users.docs.length;
@@ -40,7 +39,7 @@ async function onLoadUser() {
   try {
     const users = await db.collection("streamUsers").get();
     const userData = users.docs.map((doc) => doc.data());
-    const elem = document.getElementById("user-table");
+    const elem = getElement("user-table");
     var tr = "";
     for (let index = 0; index < userData.length; index++) {
       tr += `<tr>
@@ -60,7 +59,7 @@ async function onLoadActiveUser() {
   try {
     const users = await db.collection("streamUsers").get();
     const userData = users.docs.map((doc) => doc.data());
-    const elem = document.getElementById("user-table");
+    const elem = getElement("active-user-table");
     var tr = "";
     for (let index = 0; index < userData.length; index++) {
       if (userData[index].isActive) {
@@ -74,6 +73,25 @@ async function onLoadActiveUser() {
       <td>${userData[index].isActive || "-"}</td>
     </tr>`;
       }
+    }
+    elem.innerHTML = tr;
+  } catch (error) {}
+}
+async function onLoadMovies() {
+  try {
+    const movies = await db.collection("movieList").get();
+    const movieData = movies.docs.map((doc) => doc.data());
+    console.log("movieData : ",movieData);
+    const elem = getElement("movie-table");
+    console.log("elem : ",elem);
+    var tr = "";
+    for (let index = 0; index < movieData.length; index++) {
+        tr += `<tr>
+      <th scope="row">${index}</th>
+      <td>${movieData[index].VideoName || "-"}</td>
+      <td><img class="thumb-img" src="${movieData[index].VideoOnDemandThumb}"/></td>
+      <td>${movieData[index].VideoDescription.slice(0,100) + "..." || "-"}</td>
+    </tr>`;
     }
     elem.innerHTML = tr;
   } catch (error) {}

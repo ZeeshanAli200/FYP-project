@@ -7,3 +7,7 @@ background-color: #ff8080;
 .purple-bg{
 background-color: #e69ff4;
 }
+.thumb-img{
+    width: 75px;
+    border-radius: 5px;
+}
