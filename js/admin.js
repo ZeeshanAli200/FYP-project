@@ -81,9 +81,7 @@ async function onLoadMovies() {
   try {
     const movies = await db.collection("movieList").get();
     const movieData = movies.docs.map((doc) => doc.data());
-    console.log("movieData : ",movieData);
     const elem = getElement("movie-table");
-    console.log("elem : ",elem);
     var tr = "";
     for (let index = 0; index < movieData.length; index++) {
         tr += `<tr>
