@@ -1,8 +1,6 @@
 body{
-    background-color: #1f1f1f;
-}  
-
-
+    background-color: #1f1f1f !important;
+}
 .limitdesc{
     -webkit-line-clamp: 2;
 display: -webkit-box;
@@ -12,7 +10,4 @@ overflow: hidden;
 
 .navbar{
     box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
-}
-.bodyStyles{
-    background-color: #1f1f1f;
 }
