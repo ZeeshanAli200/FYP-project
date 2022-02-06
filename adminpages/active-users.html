@@ -11,6 +11,7 @@
       crossorigin="anonymous"
     />
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+    <link rel="stylesheet" href="../styles/userpage.css">
 
     <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
@@ -22,7 +23,39 @@
     <title>Document</title>
   </head>
   <body onload="onLoadActiveUser()">
-    <nav>Navbar</nav>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Video Streaming Web App</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav position-absolute top-1 end-0">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="./dashboard.html"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" onclick="logOut()"
+                >Logout</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <div class="container">
       <div class="row card shadow">
         <div class="col-8 offset-md-2">

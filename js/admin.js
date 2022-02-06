@@ -82,15 +82,18 @@ async function onLoadMovies() {
     const movies = await db.collection("movieList").get();
     const movieData = movies.docs.map((doc) => doc.data());
     const elem = getElement("movie-table");
+  
     var tr = "";
     for (let index = 0; index < movieData.length; index++) {
         tr += `<tr>
       <th scope="row">${index}</th>
       <td>${movieData[index].VideoName || "-"}</td>
-      <td><img class="thumb-img" src="${movieData[index].VideoOnDemandThumb}"/></td>
-      <td>${movieData[index].VideoDescription.slice(0,100) + "..." || "-"}</td>
+      <td><img class="thumb-img" src="${movieData[index].VideoImageThumbnail||movieData[index].VideoOnDemandThumb}"/></td>
     </tr>`;
     }
+    console.log("trv: ",tr);
     elem.innerHTML = tr;
-  } catch (error) {}
+  } catch (error) {
+    console.log("phat gyaaa");
+  }
 }
