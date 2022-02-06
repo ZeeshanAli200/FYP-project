@@ -24,7 +24,6 @@ let age = document.getElementById("typeNumber");
 var genderSelect = document.getElementById("citySelect");
 
 async function register() {
-  console.log(genderSelect.value);
   if (
     email.value &&
     password.value &&
@@ -88,7 +87,6 @@ async function login() {
     email.value,
     password.value
   );
-  console.log(user.uid);
   await UpdateDataInStreamUsers(user.uid, { isActive: true });
 }
 
@@ -114,8 +112,11 @@ auth.onAuthStateChanged(async (user) => {
   // unauthuser pages
   // admin pages
 
-  let pagename = pageLocArr[pageLocArr.length - 1].split("?")[0];
-  console.log(pagename);
+  let pagename = pageLocArr[pageLocArr.length - 1];
+  if(pagename.includes("?")){
+   
+    pagename=pagename.split("?")[0]
+  }
   if (user) {
     if (
       unauth.find((dt) => dt === pagename) == unauth[2] ||
@@ -159,7 +160,6 @@ auth.onAuthStateChanged(async (user) => {
     if (!unauth.find((dt) => dt == pagename)) {
       let clone = pageLocArr.slice(0);
       clone.splice(pageLocArr.length - 2, 2, unauth[0]);
-      console.log(clone);
       window.location.replace(`${clone.join("/")}`);
     }
   }
@@ -169,7 +169,6 @@ auth.onAuthStateChanged(async (user) => {
 
 async function logOut() {
   const user = await auth.currentUser;
-  console.log(user.uid);
   await UpdateDataInStreamUsers(user?.uid, { isActive: false });
   await auth.signOut();
 
