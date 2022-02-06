@@ -37,8 +37,8 @@
             <div class="card-body">
               <h2>Total User</h2>
               <div class="d-flex justify-content-between">
-                <p>0</p>
-                <button class="btn">View all</button>
+                <p id="all-user">0</p>
+                <a href="./users.html" class="btn">View all</a>
               </div>
             </div>
           </div>
@@ -48,7 +48,7 @@
             <div class="card-body">
               <h2>Total Movies</h2>
               <div class="d-flex justify-content-between">
-                <p>0</p>
+                <p id="all-movies">0</p>
                 <button class="btn">View all</button>
               </div>
             </div>
@@ -59,7 +59,7 @@
             <div class="card-body">
               <h2>Total Active Users</h2>
               <div class="d-flex justify-content-between">
-                <p>0</p>
+                <p id="all-active-user">0</p>
                 <a href="./active-users.html" class="btn" onclick="">View all</a>
               </div>
             </div>
@@ -69,6 +69,8 @@
     </div>
     <h1>adminLogin Successfully</h1>
     <button onclick="logOut()">Log out</button>
-    <script src="../app.js"></script>
+    <script  src="../app.js"></script>
+    <script  src="../js/admin.js"></script>
+    <script  src="../js/utils.js"></script>
   </body>
 </html>
