@@ -38,23 +38,19 @@ async function register() {
         ) == null
     ) {
       alert("Email is Invalid");
-
-      console.log("done1");
-      console.log(email.value);
     } else if (password.value.length < 8) {
       alert("Password Must be At least 8 Characters");
     } else if (age.value < 1 || age.value > 99) {
       alert("Age is Not Valid");
     } else {
-      console.log("admin", loginbool, registerbool);
       let UserCredientials = await auth.createUserWithEmailAndPassword(
-        email.value,
-        password.value
+        email.value.trim(),
+        password.value.trim()
       );
       // .then(async (UserCredientials) => {
       if (UserCredientials) {
         let dataObj = {
-          email: UserCredientials.user.email,
+          email: email.value.trim(),
           age: age.value,
           gender: genderSelect.value,
           role: "user",
@@ -105,9 +101,9 @@ console.log(registerbool, loginbool);
 auth.onAuthStateChanged(async (user) => {
   let pageLocArr = window.location.href.split("/");
   // let pageName = pageLocArr[pageLocArr.length - 1];
-  let authenticatedPages = ["userlogin.html"];
+  let authenticatedPages = ["userpages/userlogin.html"];
   let unauth = ["login.html", "register.html", "index.html"];
-  let adminpages = ["afterlogin.html"];
+  let adminpages = ["adminpages/dashboard.html" , "adminpages/active-users.html"];
   let pagename = pageLocArr[pageLocArr.length - 1];
   console.log(pagename);
   if (user) {
@@ -176,7 +172,7 @@ auth.onAuthStateChanged(async (user) => {
     if (!unauth.find((dt) => dt == pagename)) {
       let clone = pageLocArr.slice(0);
 
-      clone.splice(pageLocArr.length - 1, 1, unauth[0]);
+      clone.splice(pageLocArr.length - 2, 2, unauth[0]);
       console.log(clone);
       window.location.replace(`${clone.join("/")}`);
     }
