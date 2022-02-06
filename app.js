@@ -66,7 +66,7 @@ async function register() {
           .doc(UserCredientials.user.uid)
           .set(dataObj);
 
-        window.location.replace("./userpages/userlogin.html");
+        window.location.replace("./userpages/userHome.html");
       }
 
       // await saveDataToFirestore(dataObj)
@@ -108,13 +108,13 @@ auth.onAuthStateChanged(async (user) => {
   let adminpages = ["adminpages/dashboard.html" , "adminpages/active-users.html" ,  "adminpages/adminpage1.html"];
   // user pages
   let authenticatedPages = [
-    "userpages/userlogin.html",
-    "userpages/userhome.html",
+    "userpages/userHome.html",
+    "userpages/showVideo.html",
   ];
   // unauthuser pages
   // admin pages
 
-  let pagename = pageLocArr[pageLocArr.length - 1];
+  let pagename = pageLocArr[pageLocArr.length - 1].split("?")[0];
   console.log(pagename);
   if (user) {
     if (
