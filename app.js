@@ -100,6 +100,7 @@ async function UpdateDataInStreamUsers(id, data) {
 //////////////////////////////// checking for current user
 
 auth.onAuthStateChanged(async (user) => {
+  console.log(user);
   let pageLocArr = window.location.href.split("/");
   // let pageName = pageLocArr[pageLocArr.length - 1];
   let unauth = ["login.html", "register.html", "index.html"];
@@ -157,10 +158,22 @@ auth.onAuthStateChanged(async (user) => {
       }
     }
   } else {
-    if (!unauth.find((dt) => dt == pagename)) {
+    // console.log();
+
+    if (authenticatedPages.find((dt) => dt.split("/")[dt.split("/").length - 1] == pagename)|| adminpages.find((dt) => dt.split("/")[dt.split("/").length - 1] == pagename)) {
       let clone = pageLocArr.slice(0);
       clone.splice(pageLocArr.length - 2, 2, unauth[0]);
       window.location.replace(`${clone.join("/")}`);
+      // console.log(clone.join("/"));
+
+      // if(clone.length){
+      //   console.log(clone.join("/"));
+      //   window.location.replace("https://hackathon-task-project.web.app");
+      // }
+      // else{
+      //   window.location.replace(`${clone.join("/")}`);
+      // }
+      
     }
   }
 });
