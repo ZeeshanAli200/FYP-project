@@ -64,8 +64,9 @@ async function moviesLoad(eve) {
   );
 }
 async function initializePlayer(url) {
+  // console.log();
   if (window.player) {
-    console.log("three : ",url);
+    console.log("urlss",url,window.player);
     window.player.constructor("video-player", {
       url: url,
     });
@@ -84,7 +85,17 @@ async function initializePlayer(url) {
     window.player.on("qualitiesAvailable", (e) => {
       console.log(e);
     });
-    window.player.on("play", (e) => {
+    window.player.on("play", async(e) => {
+      // if(e==0){
+
+      // }
+      console.log(window.location.href.split("="));
+      let idvideo=window.location.href.split("=")
+      let idvid=idvideo[idvideo.length-1]
+      let user=await auth.currentUser
+      console.log(user.uid);
+      var messageRef = await db.collection('streamUsers').doc(`${user?.uid}`)
+                .collection('WatchedVideos').doc(`${idvid}`).set(e);
       console.log("play event  : ", e);
     });
     window.player.on("pause", (e) => {
