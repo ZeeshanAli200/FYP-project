@@ -2,7 +2,7 @@ let moviesarr = [];
 let childele = `<div class="col-sm-3">
 <div class="card">
   <img class="card-img-top" src="" alt="Card image cap" />
-  <div class="card-body">
+  <div class="gitcard-body">
     <h5 class="card-title">Special title treatment</h5>
     <p class="card-text">
       With supporting text below as a natural lead-in to additional
