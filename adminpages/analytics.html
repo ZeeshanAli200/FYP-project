@@ -22,8 +22,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-storage.js"></script>
     <title>Document</title>
   </head>
-  <body onload="onLoadActiveUser()">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
+  <body onload="renderAnalytic()">
+    <nav style="cursor: pointer;" class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Video Streaming Web App</a>
         <button
@@ -72,7 +72,7 @@
                 <th scope="col">Analytics</th>
               </tr>
             </thead>
-            <tbody id="active-user-table"></tbody>
+            <tbody id="analytic-table"></tbody>
           </table>
         </div>
       </div>
