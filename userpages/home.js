@@ -1,4 +1,5 @@
 let moviesarr = [];
+var currentime=0,videoSkipped=0
 let childele = `<div class="col-sm-3">
 <div class="card">
   <img class="card-img-top" src="" alt="Card image cap" />
@@ -72,12 +73,38 @@ async function initializePlayer(url) {
     });
     window.player.on("seek", (e) => {
       console.log("seek ", e);
+      
+      if(e.seekedFrom<e.seekedTo){
+        let cal=0
+        cal=e.seekedTo-e.seekedFrom
+        videoSkipped+=cal
+        console.log(cal,videoSkipped);
+      }else if(e.seekedTo<e.seekedFrom){
+        let cal=0
+        cal=e.seekedFrom-e.seekedTo
+        videoSkipped-=cal
+        console.log(cal,videoSkipped);
+      }
+      
     });
     window.player.on("forward", (e) => {
       console.log(e);
+      // let cal=0
+      // if(e.prevTime<e.currentTime){
+      //   cal=e.currentTime-e.prevTime
+      //   console.log(cal);
+      //   videoSkipped+=cal
+
+      // }
+      
     });
     window.player.on("rewind", (e) => {
       console.log("rewindddd : ", e);
+      // let cal=0
+      //   cal=e.prevTime-e.currentTime
+      //   // cal=e.seekedFrom-e.seekedTo
+      //   videoSkipped-=cal
+      
     });
     window.player.on("currentQuality", (e) => {
       console.log(e);
@@ -85,18 +112,22 @@ async function initializePlayer(url) {
     window.player.on("qualitiesAvailable", (e) => {
       console.log(e);
     });
+    window.player.on("onCurrentTimeChange", (e) => {
+      // console.log(e);
+      currentime=e
+    });
     window.player.on("play", async(e) => {
       // if(e==0){
 
       // }
-      console.log(window.location.href.split("="));
-      let idvideo=window.location.href.split("=")
-      let idvid=idvideo[idvideo.length-1]
-      let user=await auth.currentUser
-      console.log(user.uid);
-      var messageRef = await db.collection('streamUsers').doc(`${user?.uid}`)
-                .collection('WatchedVideos').doc(`${idvid}`).set(e);
-      console.log("play event  : ", e);
+      // console.log(window.location.href.split("="));
+      // let idvideo=window.location.href.split("=")
+      // let idvid=idvideo[idvideo.length-1]
+      // let user=await auth.currentUser
+      // console.log(user.uid);
+      // var messageRef = await db.collection('streamUsers').doc(`${user?.uid}`)
+      //           .collection('WatchedVideos').doc(`${idvid}`).set(e);
+      // console.log("play event  : ", e);
     });
     window.player.on("pause", (e) => {
       console.log("pause : ", e);
@@ -138,11 +169,10 @@ async function watchMovie() {
   </p>`
   if (ContentStreamUrlLQ) {
     console.log("one");
-    // s?etTimeout(() => {
-      // console.log("two");
+   
       console.log("url : ",ContentStreamUrlLQ);
       await initializePlayer(ContentStreamUrlLQ);
-    // }, 2000);
+   
   }
   
   await videodata();
@@ -159,11 +189,11 @@ async function watchMovie() {
       
     </div>
   </div>`;
-console.log(videoarr);
+// console.log(videoarr);
   videoarr?.map(
     (dt) =>
       (addmovieslistRecommended.innerHTML += `<div class="col-sm-12">
-        <a class="navbar-brand " href="./showVideo.html?id=${dt?.VideoEntityId}">
+        <a class="navbar-brand " onclick="getWatchedTimePlusRoute(${dt?.VideoEntityId})" >
         <div class="card">
           <img class="card-img-top" src="${dt?.VideoImageThumbnail||dt?.VideoOnDemandThumb}" alt="Card image cap" />
           <div class="card-body">
@@ -175,9 +205,22 @@ console.log(videoarr);
         </div>`)
   );
 
-  // console.log(allvideos.filter((dt)=>selectedMovie?.VideoDescription.includes(dt?.VideoDescription)));
 }
-
-setTimeout(() => {
-  watchMovie();
-}, 2000);
+// href="./showVideo.html?id=${dt?.VideoEntityId}"
+// setTimeout(() => {
+//   watchMovie();
+// }, 2000);
+async function getWatchedTimePlusRoute(nextVideoId){
+  let curretVidid=window.location.href.split("=")
+  let currVidId=curretVidid[curretVidid.length-1]
+  let watchedTime=currentime-videoSkipped
+  let user=await auth.currentUser
+  console.log(curretVidid,moviesarr);
+  let itemobj=moviesarr?.find((dt)=>dt?.VideoEntityId==currVidId)
+  
+  console.log(itemobj);
+  var vidRef = await db.collection('streamUsers').doc(`${user?.uid}`)
+                .collection('WatchedVideos').doc(`${currVidId}`).set({videoName:itemobj?.VideoName,videoId:itemobj?.VideoEntityId,image:itemobj?.VideoImageThumbnail||itemobj?.VideoOnDemandThumb,currentTime:currentime,watchedTime:watchedTime});
+  console.log(nextVideoId,"CurrentTime:",currentime,"videospkipped",videoSkipped,"calcul",currentime-videoSkipped);
+window.location.replace(`./showVideo.html?id=${nextVideoId}`)
+}
