@@ -70,9 +70,9 @@ async function onLoadActiveUser() {
 <td>${userdt.age || "-"}</td>
 <td>${userdt.role || "-"}</td>
 <td>${userdt.isActive || "-"}</td>
-<td style="cursor: pointer;"><a class="navbar-brand " onclick="showAnalyticspage(${
+<td style="cursor: pointer;"><a class="navbar-brand " onclick="showAnalyticspage('${
   String(userdt.UID)
-        })">Show Analytics</a></td>
+        }')">Show Analytics</a></td>
 </tr>`;
       }
     });
