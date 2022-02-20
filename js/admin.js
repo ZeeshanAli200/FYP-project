@@ -4,7 +4,7 @@ async function getAllUser() {
   try {
     const users = await db.collection("streamUsers").get();
     const length = users.docs.length;
-    console.log(document.getElementById("all-user"));
+    // console.log(document.getElementById("all-user"));
     document.getElementById("all-user").innerText = length;
     console.log("");
   } catch (error) {}
@@ -57,7 +57,10 @@ async function onLoadUser() {
 async function onLoadActiveUser() {
   try {
     const users = await db.collection("streamUsers").get();
-    const userData = users.docs.map((doc) => doc.data());
+    const userData = await users.docs.map((doc) => doc.data());
+
+    console.log("userData : ", userData);
+
     const elem = getElement("active-user-table");
     var tr = "";
     userData?.map((userdt, index) => {
@@ -70,9 +73,9 @@ async function onLoadActiveUser() {
 <td>${userdt.age || "-"}</td>
 <td>${userdt.role || "-"}</td>
 <td>${userdt.isActive || "-"}</td>
-<td style="cursor: pointer;"><a class="navbar-brand " onclick="showAnalyticspage(${
-  String(userdt.UID)
-        })">Show Analytics</a></td>
+<td style="cursor: pointer;"><button class="navbar-brand stats" onclick="showAnalyticspage('${String(
+          userdt?.UID
+        )}')">Show Analytics</button></td>
 </tr>`;
       }
     });
@@ -80,9 +83,10 @@ async function onLoadActiveUser() {
     elem.innerHTML = tr;
   } catch (error) {}
 }
+
 function showAnalyticspage(id) {
   console.log(id);
-  // window.location.replace(`../adminpages/analytics.html`)
+  window.location.replace(`../adminpages/analytics.html?id=${id}`);
 }
 async function onLoadMovies() {
   try {
@@ -111,15 +115,54 @@ async function onLoadMovies() {
 // ***************************************************************analytics
 async function renderAnalytic() {
   try {
-    // const users = await db.collection("streamUsers").get();
+    let selectedUserarr = window.location.href.split("=");
+    let selectedUserId = selectedUserarr[selectedUserarr.length - 1];
+    console.log(selectedUserId);
+
+    const users = await db
+      .collection(`streamUsers/${selectedUserId}/WatchedVideos`)
+      .onSnapshot((querySnapshot) => {
+        const elem = getElement("analytic-table");
+        var tr = "";
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data());
+          tr += `<tr>
+       <th scope="row">${doc.data().videoId}</th>
+       <td>${doc.data().videoName || "-"}</td>
+       <td>${
+        doc.data().currentTime < 60
+          ?`${ Math.ceil(doc.data().currentTime)}sec`
+          : `${Math.floor(doc.data().currentTime / 60)}:${Math.floor(doc.data().currentTime)
+              -Math.floor(doc.data().currentTime / 60) * 60 
+              
+            }mins` || "-"
+      }</td>
+       <td>${
+         doc.data().watchedTime < 60
+           ?`${ Math.ceil(doc.data().watchedTime)}sec`
+           : `${Math.floor(doc.data().watchedTime / 60)}:${Math.floor(doc.data().watchedTime)
+               -Math.floor(doc.data().watchedTime / 60) * 60 
+               
+             }mins` || "-"
+       }</td>
+       <td>${doc.data().videoName || "-"}</td>
+       <td>${doc.data().videoName || "-"}</td>
+       <td>${doc.data().videoName || "-"}</td>
+     </tr>`;
+        });
+        elem.innerHTML = tr;
+        // console.log("Current cities in CA: ", cities.join(", "));
+      });
+    // const userData = users.docs.map((doc) => doc.data());
+    // console.log(userData);
     // const userData = users.docs.map((doc) => doc.data());
     // db.collection("streamUsers").doc("SF")
     // .onSnapshot((doc) => {
     //     var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
     //     console.log(source, " data: ", doc.data());
     // });
-    const elem = getElement("analytic-table");
-    var tr = "";
+    // const elem = getElement("analytic-table");
+    // var tr = "";
     // for (let index = 0; index < userData.length; index++) {
     //   if (userData[index].isActive) {
     //     tr += `<tr>
@@ -134,5 +177,7 @@ async function renderAnalytic() {
     //   }
     // }
     // elem.innerHTML = tr;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }

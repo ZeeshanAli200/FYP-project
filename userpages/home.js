@@ -192,8 +192,8 @@ async function watchMovie() {
 // console.log(videoarr);
   videoarr?.map(
     (dt) =>
-      (addmovieslistRecommended.innerHTML += `<div class="col-sm-12">
-        <a class="navbar-brand " onclick="getWatchedTimePlusRoute(${dt?.VideoEntityId})" >
+      (addmovieslistRecommended.innerHTML += `<div class="col-sm-12" >
+        <a class="navbar-brand " style="cursor: pointer;" onclick="getWatchedTimePlusRoute(${dt?.VideoEntityId})" >
         <div class="card">
           <img class="card-img-top" src="${dt?.VideoImageThumbnail||dt?.VideoOnDemandThumb}" alt="Card image cap" />
           <div class="card-body">
