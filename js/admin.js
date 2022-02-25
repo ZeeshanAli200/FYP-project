@@ -73,15 +73,19 @@ async function onLoadActiveUser() {
 <td>${userdt.age || "-"}</td>
 <td>${userdt.role || "-"}</td>
 <td>${userdt.isActive || "-"}</td>
-<td style="cursor: pointer;"><button class="navbar-brand stats" onclick="showAnalyticspage('${String(
+<td style="cursor: pointer;">
+<button class="navbar-brand stats" onclick="showAnalyticspage('${String(
           userdt?.UID
-        )}')">Show Analytics</button></td>
+        )}')">Show Analytics</button>
+</td>
 </tr>`;
       }
     });
 
     elem.innerHTML = tr;
-  } catch (error) {}
+  } catch (error) {
+    console.log(err);
+  }
 }
 
 function showAnalyticspage(id) {
@@ -130,24 +134,31 @@ async function renderAnalytic() {
        <th scope="row">${doc.data().videoId}</th>
        <td>${doc.data().videoName || "-"}</td>
        <td>${
-        doc.data().currentTime < 60
-          ?`${ Math.ceil(doc.data().currentTime)}sec`
-          : `${Math.floor(doc.data().currentTime / 60)}:${Math.floor(doc.data().currentTime)
-              -Math.floor(doc.data().currentTime / 60) * 60 
-              
-            }mins` || "-"
-      }</td>
-       <td>${
-         doc.data().watchedTime < 60
-           ?`${ Math.ceil(doc.data().watchedTime)}sec`
-           : `${Math.floor(doc.data().watchedTime / 60)}:${Math.floor(doc.data().watchedTime)
-               -Math.floor(doc.data().watchedTime / 60) * 60 
-               
+         doc.data().currentTime < 60
+           ? `${Math.ceil(doc.data().currentTime)}sec`
+           : `${Math.floor(doc.data().currentTime / 60)}:${
+               Math.floor(doc.data().currentTime) -
+               Math.floor(doc.data().currentTime / 60) * 60
              }mins` || "-"
        }</td>
-       <td>${doc.data().videoName || "-"}</td>
-       <td>${doc.data().videoName || "-"}</td>
-       <td>${doc.data().videoName || "-"}</td>
+       <td>${
+         doc.data().watchedTime < 60
+           ? `${Math.ceil(doc.data().watchedTime)}sec`
+           : `${Math.floor(doc.data().watchedTime / 60)}:${
+               Math.floor(doc.data().watchedTime) -
+               Math.floor(doc.data().watchedTime / 60) * 60
+             }mins` || "-"
+       }</td>
+       <td>${
+        doc.data().highestTimeWatched < 60
+          ? `${Math.ceil(doc.data().highestTimeWatched)}sec`
+          : `${Math.floor(doc.data().highestTimeWatched / 60)}:${
+              Math.floor(doc.data().highestTimeWatched) -
+              Math.floor(doc.data().highestTimeWatched / 60) * 60
+            }mins` || "-"
+      }</td>
+       <td>${doc.data().active?"Watching": "not watching"|| "-"}</td>
+      
      </tr>`;
         });
         elem.innerHTML = tr;
