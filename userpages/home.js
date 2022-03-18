@@ -153,16 +153,7 @@ async function watchMovie() {
   const loc = window.location.href.split("/");
   const idarr = loc[loc.length - 1].split("=");
   const id = idarr[idarr.length - 1];
-  let user = await auth.currentUser;
-  // console.log("newIDDDD",id,loc);
-  let upddoc = await db
-    .collection("streamUsers")
-    .doc(`${user?.uid}`)
-    .collection("WatchedVideos")
-    .doc(`${id}`)
-    .update({
-      active: true,
-    });
+
   const bodyObj = {
     Version: "V1",
     Language: "en",
@@ -202,10 +193,16 @@ async function watchMovie() {
   const allvideos = moviesarr;
   const selectedMovie = allvideos.find((dt) => dt?.VideoEntityId == id);
   let videoarr = [];
+  let recommededArr = await fetch(`http://localhost:5000/${id}`);
+  const recData = await recommededArr.json();
 
-  for (let i = 0; i < 8; i++) {
-    videoarr.push(allvideos[Math.floor(Math.random() * 14)]);
+   console.log("recommededArr",recData,allvideos);
+   
+
+  for (let i = 0; i < recData?.moviesList?.length; i++) {
+    videoarr.push(allvideos?.find((dt)=>dt?.VideoEntityId==recData?.moviesList[i]));
   }
+console.log("videoarr",videoarr,allvideos,recData);
   addmovieslistRecommended.innerHTML = `<div class="col-sm-12">
     <div class="card-body">
       <h4 class="card-title">Recommended</h5>
@@ -231,6 +228,16 @@ async function watchMovie() {
         </div></a>
         </div>`)
   );
+  let user = await auth.currentUser;
+  console.log("newIDDDD", id, loc);
+  let upddoc = await db
+    .collection("streamUsers")
+    .doc(`${user?.uid}`)
+    .collection("WatchedVideos")
+    .doc(`${id}`)
+    .update({
+      active: true,
+    });
 }
 // href="./showVideo.html?id=${dt?.VideoEntityId}"
 // setTimeout(() => {
